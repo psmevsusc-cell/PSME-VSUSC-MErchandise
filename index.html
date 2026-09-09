@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PSME-VSUSC | Merchandise</title>
+<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="navbar">
+  <a class="brand" href="#home">
+    <img src="/psme-vsus-logo.jpg" alt="PSME-VSUSC logo">
+    <div><strong>PSME-VSUSC</strong><span>Official Merchandise</span></div>
+  </a>
+  <nav><a href="#home">Home</a><a href="#shop">Shop</a><a href="#about">About</a></nav>
+  <button class="cart-btn" onclick="openCart()">Cart <span id="cart-count">0</span></button>
+</header>
+
+<section class="hero" id="home">
+  <div class="hero-copy">
+    <span class="eyebrow">PSME-VSUSC • OFFICIAL STORE</span>
+    <h1>Wear the <span>Engineering Spirit.</span></h1>
+    <p>Official merchandise of the Philippine Society of Mechanical Engineers – Visayas State University Student Chapter.</p>
+    <a href="#shop" class="primary-btn">Shop Merchandise</a>
+  </div>
+  <div class="hero-logo"><div class="logo-ring"><img src="/psme-vsus-logo.jpg" alt="PSME-VSUSC"></div></div>
+</section>
+
+<section class="shop" id="shop">
+  <div class="section-heading">
+    <div>
+      <span class="eyebrow dark">OUR COLLECTION</span>
+      <h2>Official Merchandise</h2>
+    </div>
+    
+    <!-- Membership Status Selector -->
+    <div class="member-toggle-container">
+      <label for="membership-status"><strong>Membership Status:</strong></label>
+      <select id="membership-status" onchange="updateMembershipStatus(this.value)">
+        <option value="member">Paid Member</option>
+        <option value="non-member">Non-Member / Unpaid</option>
+      </select>
+    </div>
+  </div>
+  <div class="products" id="products"></div>
+</section>
+
+<section class="about" id="about">
+  <span class="eyebrow dark">ABOUT THE STORE</span>
+  <h2>Represent PSME-VSUSC.</h2>
+  <p>Every purchase supports the organization's activities, programs, and initiatives.</p>
+</section>
+
+<div class="overlay" id="cart-overlay">
+  <aside class="cart-panel">
+    <div class="cart-header"><h2>Your Cart</h2><button class="icon-btn" onclick="closeCart()">×</button></div>
+    <div id="cart-items" class="cart-items"></div>
+    <div class="cart-footer">
+      <div class="total-row"><span>Total</span><strong id="cart-total">₱0</strong></div>
+      <button class="primary-btn full" onclick="goToCheckout()">Proceed to Order</button>
+    </div>
+  </aside>
+</div>
+
+<div class="modal" id="checkout-modal">
+  <div class="checkout-card">
+    <div class="cart-header">
+      <div><span class="eyebrow dark">ORDER FORM</span><h2>Complete Your Order</h2></div>
+      <button class="icon-btn" onclick="closeCheckout()">×</button>
+    </div>
+
+    <form id="order-form">
+      <div class="form-grid">
+        <label>Full Name<input required name="name" placeholder="Juan Dela Cruz"></label>
+        <label>Student ID<input required name="studentId" placeholder="2026-00000"></label>
+        <label>Course / Year<input required name="courseYear" placeholder="BSME - 3rd Year"></label>
+        <label>Contact Number<input required name="contact" placeholder="09XXXXXXXXX"></label>
+        <label>Membership Status
+          <select required name="membershipType" id="checkout-membership-type" onchange="updateMembershipStatus(this.value)">
+            <option value="member">Paid Member</option>
+            <option value="non-member">Non-Member / Unpaid Fee</option>
+          </select>
+        </label>
+        <label>Payment Method
+          <select required name="payment">
+            <option value="">Select payment method</option>
+            <option>GCash</option>
+            <option>Bank Transfer</option>
+            <option>Cash</option>
+          </select>
+        </label>
+        <label>Pickup / Delivery
+          <select required name="fulfillment" onchange="toggleDeliveryFields(this.value)">
+            <option value="">Select option</option>
+            <option>Organization Pickup</option>
+            <option>Delivery</option>
+          </select>
+        </label>
+      </div>
+
+      <div id="delivery-fields" class="delivery-fields hidden">
+        <label>Delivery Address<textarea name="address" placeholder="Enter delivery address"></textarea></label>
+      </div>
+
+      <label class="upload-label">Proof of Payment
+        <input id="proof" type="file" accept="image/png,image/jpeg,image/webp,application/pdf" required>
+        <small>Accepted: JPG, PNG, WEBP, or PDF. Maximum 5 MB.</small>
+      </label>
+
+      <div class="order-summary"><h3>Order Summary</h3><div id="checkout-summary"></div>
+        <div class="summary-total"><span>Total</span><strong id="checkout-total">₱0</strong></div>
+      </div>
+
+      <div id="form-message" class="form-message"></div>
+      <button class="primary-btn full" id="submit-order" type="submit">Submit Order</button>
+    </form>
+  </div>
+</div>
+
+<!-- Order Status Lookup Section -->
+<section id="order-status-section" class="order-status-container">
+  <h2>Track Your Order Status</h2>
+  <p>Enter your Order Number (e.g., PSME-2026-B8FC68FC) to check its current status.</p>
+  
+  <div class="search-box">
+    <input type="text" id="lookup-order-input" placeholder="Enter Order Number..." />
+    <button id="lookup-order-btn" type="button">Check Status</button>
+  </div>
+
+  <!-- Results Display -->
+  <div id="order-status-result" class="status-result-card" style="display: none;">
+    <p><strong>Order Number:</strong> <span id="res-order-no"></span></p>
+    <p><strong>Customer Name:</strong> <span id="res-name"></span></p>
+    <p><strong>Status:</strong> <span id="res-status" class="status-badge"></span></p>
+    <p><strong>Total Amount:</strong> <span id="res-total"></span></p>
+  </div>
+
+  <p id="order-lookup-error" class="error-msg" style="color: red; display: none;"></p>
+</section>
+
+<footer>
+  <img src="/psme-vsus-logo.jpg" alt="PSME-VSUSC">
+  <strong>PSME-VSUSC</strong>
+  <p>Philippine Society of Mechanical Engineers – Visayas State University Student Chapter</p>
+  <small>© 2026 PSME-VSUSC. All Rights Reserved.</small>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

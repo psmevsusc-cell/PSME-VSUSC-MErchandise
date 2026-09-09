@@ -20,7 +20,7 @@ const products = [
     description: "Official customized PSME-VSUSC lanyard.",
     tag: "ESSENTIAL",
     image: "/lanyard-accessory.jpg"
-  }
+  },
   {
     id: 3,
     name: "PSME-VSUSC Windbreaker Jacket",
